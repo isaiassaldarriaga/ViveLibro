@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vive Libro - Administrar recomendaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nogal: #3b2a20; --kraft: #8f6a4a; --arcilla: #a8553a; --musgo: #5f6b3c;
+            --pergamino: #f1e8d6; --arena: #e2d4b9; --papel: #fbf6ea;
+        }
+        body { background: var(--pergamino); color: var(--nogal); font-family: "Nunito Sans", system-ui, sans-serif; line-height: 1.55; min-height: 100vh; }
+        h1, h2, h3 { font-family: "Fraunces", Georgia, serif; }
+
+        .encabezado { position: relative; background: var(--nogal); color: var(--pergamino); padding: 2.5rem 1rem 2rem; text-align: center; }
+        .encabezado h1 { font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.6rem); margin: 0; }
+        .encabezado p { color: var(--arena); margin: .4rem 0 0; font-size: 1.1rem; }
+        .divisor { width: 100%; height: 14px; background: var(--kraft); }
+
+        /* Menú redondo */
+        .menu-usuario { position: absolute; top: 1rem; right: 1rem; z-index: 10; }
+        .btn-perfil { width: 52px; height: 52px; padding: 0; border-radius: 50%; background: var(--papel); border: 3px solid var(--kraft); font-size: 1.5rem; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(0,0,0,.3); transition: transform .15s, background .15s; }
+        .btn-perfil:hover, .btn-perfil:focus, .btn-perfil.show { background: var(--arena); transform: scale(1.06); box-shadow: 0 3px 10px rgba(0,0,0,.3); }
+        .menu-usuario .dropdown-menu { background: var(--papel); border: 1px solid var(--arena); border-radius: .75rem; box-shadow: 0 6px 18px rgba(59,42,32,.25); padding: .4rem; min-width: 12rem; margin-top: .5rem; }
+        .menu-usuario .dropdown-item { border-radius: .5rem; font-weight: 700; color: var(--nogal); padding: .5rem .8rem; }
+        .menu-usuario .dropdown-item:hover, .menu-usuario .dropdown-item:focus { background: var(--arena); color: var(--nogal); }
+        .menu-usuario .dropdown-item.salir { color: #9a3324; }
+        .menu-usuario .dropdown-divider { border-color: var(--arena); }
+
+        .card { background: var(--papel); border: 1px solid var(--arena); border-radius: 1rem; box-shadow: 0 6px 18px rgba(59,42,32,.12); }
+        .card-body { padding: 1.75rem; }
+        .card h2 { font-size: 1.4rem; font-weight: 600; }
+
+        .form-label { font-weight: 700; font-size: .9rem; }
+        .form-control { background-color: #fffdf7; border-color: var(--arena); }
+        .form-control:focus { border-color: var(--musgo); box-shadow: 0 0 0 .2rem rgba(95,107,60,.25); }
+        .form-text { color: var(--kraft); }
+
+        .btn-dark { background: var(--arcilla); border-color: var(--arcilla); color: #fff; font-weight: 700; padding: .6rem 1rem; }
+        .btn-dark:hover, .btn-dark:focus { background: #8c4430; border-color: #8c4430; color: #fff; }
+        .btn-outline-secondary { color: var(--musgo); border-color: var(--musgo); font-weight: 700; }
+        .btn-outline-secondary:hover { background: var(--musgo); border-color: var(--musgo); color: #fff; }
+        .btn-outline-danger { color: #9a3324; border-color: #9a3324; }
+        .btn-outline-danger:hover { background: #9a3324; border-color: #9a3324; color: #fff; }
+
+        .aviso { border-radius: .75rem; padding: .75rem 1rem; margin-bottom: 1rem; font-weight: 600; }
+        .aviso-error { background: #f6ddd6; color: #7a2a1b; border: 1px solid #e3b4a8; }
+        .aviso-ok { background: #e3e8d2; color: #3f4a22; border: 1px solid #c3cca3; }
+        .aviso-info { background: var(--arena); color: var(--nogal); border: 1px solid var(--kraft); }
+
+        /* Lista */
+        .item { display: flex; gap: 1rem; align-items: flex-start; padding: 1rem 0; border-bottom: 1px solid var(--arena); }
+        .item:last-child { border-bottom: 0; }
+        .item .info { flex: 1; min-width: 0; }
+        .item h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
+        .item .autor { color: var(--kraft); font-style: italic; }
+        .item .resumen { font-size: .92rem; margin: .25rem 0 0; overflow-wrap: anywhere; }
+        .item .acciones { display: flex; gap: .4rem; flex: none; }
+        .etiqueta { display: inline-block; background: var(--musgo); color: var(--papel); font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: .1rem .55rem; border-radius: 999px; margin-left: .4rem; vertical-align: middle; }
+        .item.editando { background: #f3ecd9; border-radius: .5rem; padding-left: .6rem; padding-right: .6rem; }
+    </style>
+</head>
+<body>
+
+    <header class="encabezado">
+        
+        <div class="menu-usuario dropdown">
+            <button class="btn btn-perfil" type="button" id="menuUsuario" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menú de usuario" title="Mi cuenta">
+                <span aria-hidden="true">👤</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuUsuario">
+                <li><a class="dropdown-item" href="index.html">🏠 Inicio</a></li>
+                <li><a class="dropdown-item" href="Perfil.html">👤 Perfil</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button type="button" class="dropdown-item salir" onclick="CerrarSesion()">🚪 Cerrar sesión</button></li>
+            </ul>
+        </div>
+
+        <h1>Vive Libro</h1>
+        <p>Panel de administración · Recomendaciones</p>
+    </header>
+    <div class="divisor"></div>
+
+    <main class="container my-5" style="max-width: 1000px;">
+
+        <div id="aviso" class="aviso d-none" role="alert"></div>
+        <p id="verificando" class="text-center text-muted">Verificando permisos...</p>
+
+        <div id="contenido" class="d-none">
+            <div class="row g-4">
+
+                <!-- Formulario -->
+                <div class="col-lg-5">
+                    <section class="card">
+                        <div class="card-body">
+                            <h2 id="tituloFormulario" class="mb-3">Nueva recomendación</h2>
+
+                            <label for="rTitulo" class="form-label">Título</label>
+                            <input id="rTitulo" class="form-control mb-3" maxlength="120">
+
+                            <label for="rAutor" class="form-label">Autor</label>
+                            <input id="rAutor" class="form-control mb-3" maxlength="120">
+
+                            <label for="rGenero" class="form-label">Género</label>
+                            <input id="rGenero" class="form-control mb-3" list="generos" maxlength="40" placeholder="Escribe o elige uno">
+                            <datalist id="generos">
+                                <option value="Novela"><option value="Fábula"><option value="Distopía"><option value="Clásico">
+                                <option value="Fantasía"><option value="Ciencia ficción"><option value="Misterio"><option value="Romance">
+                                <option value="Historia"><option value="Desarrollo personal">
+                            </datalist>
+
+                            <label for="rResumen" class="form-label">Resumen</label>
+                            <textarea id="rResumen" class="form-control mb-1" rows="4" maxlength="250"></textarea>
+                            <div class="form-text mb-4"><span id="contadorResumen">0</span>/250 caracteres</div>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" id="btnGuardar" class="btn btn-dark flex-fill" onclick="GuardarRecomendacion()">Agregar recomendación</button>
+                                <button type="button" id="btnCancelar" class="btn btn-outline-secondary d-none" onclick="CancelarEdicion()">Cancelar</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Lista -->
+                <div class="col-lg-7">
+                    <section class="card">
+                        <div class="card-body">
+                            <h2 class="mb-2">Recomendaciones actuales (<span id="contador">0</span>)</h2>
+                            <div id="lista"></div>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    
+    <script src="adminFront.js"></script>
+
+    <script>
+        let modoVistaPrevia = false;
+        if (typeof ObtenerRecomendaciones !== "function") {
+            modoVistaPrevia = true;
+            let demo = [
+                { IdRecomendacion: 1, Titulo: "Cien años de soledad", Autor: "Gabriel García Márquez", Genero: "Novela", Resumen: "La historia de varias generaciones de la familia Buendía en el pueblo de Macondo." },
+                { IdRecomendacion: 2, Titulo: "1984", Autor: "George Orwell", Genero: "Distopía", Resumen: "Una sociedad vigilada por el Gran Hermano, donde pensar distinto es un delito." }
+            ];
+            let siguiente = 3;
+            window.EsAdministrador = async () => true;
+            window.ObtenerRecomendaciones = async () => demo.slice();
+            window.CrearRecomendacion = async (d) => { demo.unshift({ IdRecomendacion: siguiente++, ...d }); return { ok: true }; };
+            window.ActualizarRecomendacion = async (id, d) => { demo = demo.map(r => r.IdRecomendacion === id ? { ...r, ...d } : r); return { ok: true }; };
+            window.EliminarRecomendacion = async (id) => { demo = demo.filter(r => r.IdRecomendacion !== id); return { ok: true }; };
+        }
+        const $ = (id) => document.getElementById(id);
+        let recomendaciones = [];
+        let editandoId = null;
+
+        function MostrarAviso(tipo, texto) {
+            const a = $("aviso");
+            a.textContent = texto;
+            a.className = "aviso " + (tipo === "ok" ? "aviso-ok" : tipo === "info" ? "aviso-info" : "aviso-error");
+        }
+        function OcultarAviso() { $("aviso").className = "aviso d-none"; }
+
+        function Crear(tag, clase, texto) {
+            const e = document.createElement(tag);
+            if (clase) e.className = clase;
+            if (texto !== undefined) e.textContent = texto;   // textContent evita inyectar HTML
+            return e;
+        }
+
+        function PintarLista() {
+            const cont = $("lista");
+            cont.innerHTML = "";
+            $("contador").textContent = recomendaciones.length;
+
+            if (recomendaciones.length === 0) {
+                cont.appendChild(Crear("p", "text-muted mb-0 py-3", "Aún no hay recomendaciones. Agrega la primera con el formulario."));
+                return;
+            }
+
+            recomendaciones.forEach((r) => {
+                const item = Crear("div", "item" + (r.IdRecomendacion === editandoId ? " editando" : ""));
+
+                const info = Crear("div", "info");
+                const titulo = Crear("h3", "", r.Titulo);
+                if (r.Genero) titulo.appendChild(Crear("span", "etiqueta", r.Genero));
+                info.appendChild(titulo);
+                info.appendChild(Crear("div", "autor", r.Autor));
+                if (r.Resumen) info.appendChild(Crear("p", "resumen", r.Resumen));
+
+                const acciones = Crear("div", "acciones");
+                const btnEditar = Crear("button", "btn btn-outline-secondary btn-sm");
+                btnEditar.type = "button"; btnEditar.title = "Editar";
+                btnEditar.innerHTML = '<i class="bi bi-pencil"></i>';
+                btnEditar.onclick = () => EditarRecomendacion(r.IdRecomendacion);
+                const btnBorrar = Crear("button", "btn btn-outline-danger btn-sm");
+                btnBorrar.type = "button"; btnBorrar.title = "Borrar";
+                btnBorrar.innerHTML = '<i class="bi bi-trash"></i>';
+                btnBorrar.onclick = () => BorrarRecomendacion(r.IdRecomendacion);
+                acciones.append(btnEditar, btnBorrar);
+
+                item.append(info, acciones);
+                cont.appendChild(item);
+            });
+        }
+
+        function LimpiarFormulario() {
+            ["rTitulo", "rAutor", "rGenero", "rResumen"].forEach((id) => { $(id).value = ""; });
+            $("contadorResumen").textContent = "0";
+            editandoId = null;
+            $("tituloFormulario").textContent = "Nueva recomendación";
+            $("btnGuardar").textContent = "Agregar recomendación";
+            $("btnCancelar").classList.add("d-none");
+        }
+
+        async function Recargar() {
+            recomendaciones = await ObtenerRecomendaciones();
+            PintarLista();
+        }
+
+        function EditarRecomendacion(id) {
+            const r = recomendaciones.find((x) => x.IdRecomendacion === id);
+            if (!r) return;
+            OcultarAviso();
+            editandoId = id;
+            $("rTitulo").value = r.Titulo || "";
+            $("rAutor").value = r.Autor || "";
+            $("rGenero").value = r.Genero || "";
+            $("rResumen").value = r.Resumen || "";
+            $("contadorResumen").textContent = $("rResumen").value.length;
+            $("tituloFormulario").textContent = "Editar recomendación";
+            $("btnGuardar").textContent = "Guardar cambios";
+            $("btnCancelar").classList.remove("d-none");
+            PintarLista();
+            $("rTitulo").focus();
+        }
+
+        function CancelarEdicion() {
+            LimpiarFormulario();
+            PintarLista();
+        }
+
+        async function GuardarRecomendacion() {
+            const datos = {
+                Titulo: $("rTitulo").value.trim(),
+                Autor: $("rAutor").value.trim(),
+                Genero: $("rGenero").value.trim(),
+                Resumen: $("rResumen").value.trim()
+            };
+            if (!datos.Titulo || !datos.Autor) {
+                MostrarAviso("error", "El título y el autor son obligatorios.");
+                return;
+            }
+
+            const boton = $("btnGuardar");
+            const textoOriginal = boton.textContent;
+            boton.disabled = true;
+            boton.textContent = "Guardando...";
+
+            try {
+                const res = editandoId === null
+                    ? await CrearRecomendacion(datos)
+                    : await ActualizarRecomendacion(editandoId, datos);
+                if (!res.ok) throw new Error(res.error || "No se pudo guardar.");
+
+                const editaba = editandoId !== null;
+                LimpiarFormulario();
+                await Recargar();
+                MostrarAviso("ok", editaba ? "Recomendación actualizada." : "Recomendación agregada.");
+            } catch (e) {
+                boton.textContent = textoOriginal;
+                MostrarAviso("error", e.message);
+            } finally {
+                boton.disabled = false;
+            }
+        }
+
+        async function BorrarRecomendacion(id) {
+            const r = recomendaciones.find((x) => x.IdRecomendacion === id);
+            if (!r || !confirm('¿Borrar la recomendación "' + r.Titulo + '"?')) return;
+            try {
+                const res = await EliminarRecomendacion(id);
+                if (!res.ok) throw new Error(res.error || "No se pudo borrar.");
+                if (editandoId === id) LimpiarFormulario();
+                await Recargar();
+                MostrarAviso("ok", "Recomendación borrada.");
+            } catch (e) {
+                MostrarAviso("error", e.message);
+            }
+        }
+
+        async function CerrarSesion() {
+            try {
+                const cliente = (typeof db !== "undefined") ? db : window.supabaseClient;
+                await cliente.auth.signOut();
+            } catch (e) { /* sin sesión o vista previa */ }
+            window.location.href = "Login.html";
+        }
+
+        $("rResumen").addEventListener("input", () => {
+            $("contadorResumen").textContent = $("rResumen").value.length;
+        });
+
+        (async function Iniciar() {
+            try {
+                const admin = await EsAdministrador();
+                if (!admin) {                       
+                    window.location.href = "index.html";
+                    return;
+                }
+                $("verificando").classList.add("d-none");
+                $("contenido").classList.remove("d-none");
+                if (modoVistaPrevia) MostrarAviso("info", "Vista previa con datos de ejemplo: aún no está conectada a Supabase.");
+                await Recargar();
+            } catch (e) {
+                $("verificando").textContent = "No se pudo cargar el panel: " + e.message;
+            }
+        })();
+    </script>
+</body>
+</html>

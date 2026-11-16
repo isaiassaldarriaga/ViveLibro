@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vive Libro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --nogal: #3b2a20;
+            --kraft: #8f6a4a;
+            --arcilla: #a8553a;
+            --musgo: #5f6b3c;
+            --pergamino: #f1e8d6;
+            --arena: #e2d4b9;
+            --papel: #fbf6ea;
+        }
+        body {
+            background: var(--pergamino);
+            color: var(--nogal);
+            font-family: "Nunito Sans", system-ui, sans-serif;
+            line-height: 1.55;
+        }
+        h1, h2, h5, h6, .h5 { font-family: "Fraunces", Georgia, serif; }
+
+        /* Encabezado */
+        .encabezado {
+            position: relative;
+            background: var(--nogal);
+            color: var(--pergamino);
+            padding: 2.5rem 1rem 2rem;
+        }
+        .encabezado h1 { font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.6rem); margin: 0; }
+        .encabezado p { color: var(--arena); margin: .4rem 0 0; font-size: 1.1rem; }
+
+        .divisor { width: 100%; height: 14px; background: var(--kraft); }
+
+        /* Ilustración */
+        .ilustracion { border-radius: 1rem; border: 6px solid var(--papel); box-shadow: 0 6px 18px rgba(59,42,32,.25); }
+
+        /* Carrusel de tablas */
+        #carruselTablas {
+            background: var(--papel);
+            border: 1px solid var(--arena);
+            border-radius: 1rem;
+            padding: 1.25rem 0 2.5rem;
+            box-shadow: 0 6px 18px rgba(59,42,32,.12);
+        }
+        #carruselTablas .carousel-control-prev,
+        #carruselTablas .carousel-control-next { width: 4%; }
+        #carruselTablas .carousel-control-prev-icon,
+        #carruselTablas .carousel-control-next-icon { filter: invert(1) grayscale(100); }
+        #carruselTablas .carousel-indicators { margin-bottom: .6rem; }
+        #carruselTablas .carousel-indicators [data-bs-target] { background-color: var(--kraft); height: 4px; }
+        #carruselTablas h5 { font-size: 1.5rem; color: var(--nogal); margin-bottom: 1rem; }
+        .titulo-musgo { color: var(--musgo) !important; }
+
+        .table { --bs-table-striped-bg: var(--pergamino); --bs-table-bg: var(--papel); color: var(--nogal); border-color: var(--arena); }
+        .table-dark { --bs-table-bg: var(--kraft); --bs-table-color: var(--papel); border-color: var(--kraft); }
+        .table-bordered > :not(caption) > * > * { border-color: var(--arena); }
+
+        /* Tarjetas */
+        .card { background: var(--papel); border: 1px solid var(--arena); border-radius: 1rem; box-shadow: 0 6px 18px rgba(59,42,32,.12); }
+        .form-label { font-weight: 700; font-size: .9rem; }
+        .form-control, .form-select { background-color: #fffdf7; border-color: var(--arena); }
+        .form-control:focus, .form-select:focus { border-color: var(--musgo); box-shadow: 0 0 0 .2rem rgba(95,107,60,.25); }
+
+        /* Botones */
+        .btn-dark { background: var(--arcilla); border-color: var(--arcilla); color: #fff; font-weight: 700; }
+        .btn-dark:hover, .btn-dark:focus { background: #8c4430; border-color: #8c4430; color: #fff; }
+        .btn-outline-secondary { color: var(--musgo); border-color: var(--musgo); }
+        .btn-outline-secondary:hover { background: var(--musgo); border-color: var(--musgo); color: #fff; }
+        .btn-outline-danger { color: #9a3324; border-color: #9a3324; }
+        .btn-outline-danger:hover { background: #9a3324; border-color: #9a3324; color: #fff; }
+
+        /* Menú redondo */
+        .menu-usuario { position: absolute; top: 1rem; right: 1rem; z-index: 10; text-align: left; }
+        .btn-perfil { width: 52px; height: 52px; padding: 0; border-radius: 50%; background: var(--papel); border: 3px solid var(--kraft); font-size: 1.5rem; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(0,0,0,.3); transition: transform .15s, background .15s; }
+        .btn-perfil:hover, .btn-perfil:focus, .btn-perfil.show { background: var(--arena); transform: scale(1.06); box-shadow: 0 3px 10px rgba(0,0,0,.3); }
+        .menu-usuario .dropdown-menu { background: var(--papel); border: 1px solid var(--arena); border-radius: .75rem; box-shadow: 0 6px 18px rgba(59,42,32,.25); padding: .4rem; min-width: 13rem; margin-top: .5rem; }
+        .menu-usuario .dropdown-item { border-radius: .5rem; font-weight: 700; color: var(--nogal); padding: .5rem .8rem; }
+        .menu-usuario .dropdown-item:hover, .menu-usuario .dropdown-item:focus { background: var(--arena); color: var(--nogal); }
+        .menu-usuario .dropdown-item.salir { color: #9a3324; }
+        .menu-usuario .dropdown-divider { border-color: var(--arena); }
+
+        /* Recomendaciones */
+        .seccion-titulo { font-size: 2rem; font-weight: 600; }
+        .seccion-sub { color: var(--kraft); margin-bottom: 1.5rem; }
+        .rec { height: 100%; transition: transform .15s, box-shadow .15s; }
+        .rec:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(59,42,32,.2); }
+        .rec .card-body { display: flex; flex-direction: column; padding: 1.5rem; }
+        .rec h3 { font-family: "Fraunces", Georgia, serif; font-size: 1.3rem; font-weight: 600; margin: .6rem 0 .1rem; }
+        .rec .autor { color: var(--kraft); font-style: italic; margin-bottom: .6rem; }
+        .rec p.resumen { flex: 1; margin-bottom: 1rem; }
+        .etiqueta { align-self: flex-start; background: var(--musgo); color: var(--papel); font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: .2rem .6rem; border-radius: 999px; }
+
+        #detalleVacio { padding: 1.5rem 0; text-align: center; }
+        #dNotas { background: var(--pergamino); border-radius: .5rem; padding: .5rem .75rem; }
+    </style>
+</head>
+<body>
+    <header class="encabezado text-center">
+        
+        <div class="menu-usuario dropdown">
+            <button class="btn btn-perfil" type="button" id="menuUsuario" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menú de usuario" title="Mi cuenta">
+                <span aria-hidden="true">👤</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuUsuario">
+                <li><a class="dropdown-item" href="Perfil.html">👤 Perfil</a></li>
+                <li><a class="dropdown-item" href="Politicas.html">📄 Política de privacidad</a></li>
+                <li id="itemAdmin" class="d-none"><a class="dropdown-item" href="Admin.html">🛠️ Administrar</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button type="button" class="dropdown-item salir" onclick="CerrarSesion()">🚪 Cerrar sesión</button></li>
+            </ul>
+        </div>
+
+        <h1>Vive Libro</h1>
+        <p>Registra lo que lees y muéstranos qué te parece</p>
+    </header>
+
+    <main>
+        <div class="container my-5">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-4">
+                <img src="https://media.istockphoto.com/id/2173938286/es/vector/pila-de-libros-de-diferentes-colores.jpg?s=612x612&w=0&k=20&c=fwjgOTbjEB1O-fwLE0GE5HgANj_EglI0Tl1lwI9Ql5Y=" class="img-fluid ilustracion" alt="Pila de libros de colores">
+            </div>
+
+            <div class="col-md-8">
+                <div id="carruselTablas" class="carousel slide" data-bs-ride="false">
+
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carruselTablas" data-bs-slide-to="0" class="active"></button>
+                        <button type="button" data-bs-target="#carruselTablas" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#carruselTablas" data-bs-slide-to="2"></button>
+                    </div>
+
+                    <div class="carousel-inner">
+
+                        <!-- Tabla 1 -->
+                        <div class="carousel-item active">
+                            <div class="table-responsive px-5 pb-4">
+                                <h5 class="text-center">Por leer</h5>
+                                <table class="table table-striped table-bordered">
+                                    <thead class="table-dark">
+                                        <tr><th>#</th><th>Libro</th><th>Páginas</th><th>Más</th></tr>
+                                    </thead>
+                                    <tbody data-estado="1"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tabla 2 -->
+                        <div class="carousel-item">
+                            <div class="table-responsive px-5 pb-4">
+                                <h5 class="text-center">Leyendo</h5>
+                                <table class="table table-striped table-bordered">
+                                    <thead class="table-dark">
+                                        <tr><th>#</th><th>Libro</th><th>Páginas</th><th>Más</th></tr>
+                                    </thead>
+                                    <tbody data-estado="2"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tabla 3 -->
+                        <div class="carousel-item">
+                            <div class="table-responsive px-5 pb-4">
+                                <h5 class="text-center">Leídos</h5>
+                                <table class="table table-striped table-bordered">
+                                    <thead class="table-dark">
+                                        <tr><th>#</th><th>Libro</th><th>Páginas</th><th>Más</th></tr>
+                                    </thead>
+                                    <tbody data-estado="3"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carruselTablas" data-bs-slide="prev" aria-label="Anterior">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carruselTablas" data-bs-slide="next" aria-label="Siguiente">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        </div>
+        <div class="divisor"></div>
+        <div class="container my-4">
+        <div class="row g-4">
+            
+            <div class="col-md-8">
+                <div id="panelDetalle" class="card">
+                    <div class="card-body p-4">
+
+                        <p id="detalleVacio" class="text-muted mb-0">
+                            Selecciona un libro de las tablas para ver sus detalles.
+                        </p>
+
+                        <div id="detalleContenido" class="d-none">
+                            <h5 id="dTitulo" class="mb-0 h3"></h5>
+                            <p id="dAutor" class="text-muted fst-italic mb-3"></p>
+
+                            <label for="dEstado" class="form-label">Estado</label>
+                            <select id="dEstado" class="form-select mb-3">
+                                <option value="1">Por leer</option>
+                                <option value="2">Leyendo</option>
+                                <option value="3">Leído</option>
+                            </select>
+
+                            <h6>Notas</h6>
+                            <div id="dNotas" class="mb-3" style="max-height: 180px; overflow-y: auto;"></div>
+
+                            <label for="dNuevaNota" class="form-label">Nueva nota o comentario</label>
+                            <textarea id="dNuevaNota" class="form-control mb-3" rows="3"
+                                      placeholder="¿Qué te pareció? ¿Hasta dónde vas?"></textarea>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" id="btnGuardar" class="btn btn-dark flex-fill">Guardar</button>
+                                <button type="button" id="btnEliminar" class="btn btn-outline-danger flex-fill">Eliminar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agregar libro -->
+            <div class="col-md-4">
+                <section class="card h-100">
+                    <div class="card-body p-4">
+                        <h2 class="h5 card-title mb-3">Agregar libro</h2>
+
+                        <div class="mb-3">
+                            <label for="t" class="form-label">Título</label>
+                            <input id="t" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="a" class="form-label">Autor</label>
+                            <input id="a" class="form-control">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col">
+                                <label for="p" class="form-label">Páginas</label>
+                                <input id="p" type="number" min="1" class="form-control">
+                            </div>
+                            <div class="col">
+                                <label for="s" class="form-label">Estado</label>
+                                <select id="s" class="form-select">
+                                    <option value="1">Por leer</option>
+                                    <option value="2">Leyendo</option>
+                                    <option value="3">Leído</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-dark w-100" id="addBtn" onclick="GuardarLibro()">Agregar libro</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+        </div>
+
+        <section class="container my-5" id="recomendaciones">
+            <h2 class="seccion-titulo">Recomendaciones para tu próxima lectura</h2>
+            <p class="seccion-sub">Algunos libros para empezar. Pulsa «Agregar a mi lista» y completa las páginas en el formulario.</p>
+            <div class="row g-4" id="listaRecomendaciones">
+                <p class="text-muted">Cargando recomendaciones...</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>

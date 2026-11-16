@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Backend/Server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "Public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/Backend/Server.js"
+    },
+    {
+      "src": "^/$",
+      "dest": "/Public/Login.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Public/$1"
+    }
+  ]
+}

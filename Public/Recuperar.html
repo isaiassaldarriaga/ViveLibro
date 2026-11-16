@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vive Libro - Recuperar contraseña</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nogal: #3b2a20;
+            --kraft: #8f6a4a;
+            --arcilla: #a8553a;
+            --musgo: #5f6b3c;
+            --pergamino: #f1e8d6;
+            --arena: #e2d4b9;
+            --papel: #fbf6ea;
+        }
+        body {
+            background: var(--pergamino);
+            color: var(--nogal);
+            font-family: "Nunito Sans", system-ui, sans-serif;
+            line-height: 1.55;
+            min-height: 100vh;
+        }
+        h1, h4 { font-family: "Fraunces", Georgia, serif; }
+
+        .encabezado { background: var(--nogal); color: var(--pergamino); padding: 2.5rem 1rem 2rem; text-align: center; }
+        .encabezado h1 { font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.6rem); margin: 0; }
+        .encabezado p { color: var(--arena); margin: .4rem 0 0; font-size: 1.1rem; }
+        .divisor { width: 100%; height: 14px; background: var(--kraft); }
+
+        .card { background: var(--papel); border: 1px solid var(--arena); border-radius: 1rem; box-shadow: 0 6px 18px rgba(59,42,32,.12); }
+        .card-body { padding: 2rem; }
+        .card h4 { font-weight: 600; font-size: 1.6rem; }
+
+        .form-label { font-weight: 700; font-size: .9rem; }
+        .form-control { background-color: #fffdf7; border-color: var(--arena); }
+        .form-control:focus { border-color: var(--musgo); box-shadow: 0 0 0 .2rem rgba(95,107,60,.25); }
+        .form-text { color: var(--kraft); }
+
+        .btn-dark { background: var(--arcilla); border-color: var(--arcilla); color: #fff; font-weight: 700; padding: .6rem 1rem; }
+        .btn-dark:hover, .btn-dark:focus { background: #8c4430; border-color: #8c4430; color: #fff; }
+
+        a { color: var(--musgo); font-weight: 700; }
+        a:hover { color: var(--arcilla); }
+    </style>
+</head>
+<body>
+
+    <header class="encabezado">
+        <h1>Vive Libro</h1>
+        <p>Registra lo que lees y muéstranos qué te parece</p>
+    </header>
+    <div class="divisor"></div>
+
+    <div class="container my-5" style="max-width: 460px;">
+
+        <div id="seccionRecuperar" class="card">
+            <div class="card-body">
+                <h4 class="mb-2">Recuperar contraseña</h4>
+                <p class="mb-3">Escribe el correo de tu cuenta y te enviaremos un enlace para crear una contraseña nueva.</p>
+
+                <label for="recEmail" class="form-label">Correo</label>
+                <input type="email" id="recEmail" class="form-control mb-4">
+
+                <button type="button" class="btn btn-dark w-100 mb-3" onclick="RecuperarContrasena()">Enviar enlace</button>
+
+                <p class="text-center mb-0">
+                    <a href="Login.html">Volver a iniciar sesión</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>    
+    <script src="loginFront.js"></script>
+
+
+    <script>
+        if (typeof window.RecuperarContrasena !== "function") {
+            window.RecuperarContrasena = function () {
+                alert("Vista previa: abre esta página desde tu proyecto, con backend/Login.js, para conectar con Supabase.");
+            };
+        }
+    </script>
+</body>
+</html>
