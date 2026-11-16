@@ -1,27 +1,17 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "Backend/Server.js",
-      "use": "@vercel/node"
+      "source": "/api/(.*)",
+      "destination": "/Backend/Server.js"
     },
     {
-      "src": "Public/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/Backend/Server.js"
+      "source": "/",
+      "destination": "/Public/Login.html"
     },
     {
-      "src": "^/$",
-      "dest": "/Public/Login.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/Public/$1"
+      "source": "/(.*)",
+      "destination": "/Public/$1"
     }
   ]
 }
