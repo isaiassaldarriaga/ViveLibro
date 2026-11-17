@@ -4,7 +4,6 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 const API_URL = "/api";
 
 async function ObtenerUsuarioActual() {
-    // Leemos directamente desde el almacenamiento local para evitar falsos rebotes
     const storageKey = "sb-yxsogwdxqnmzppuafhqx-auth-token";
     const rawSession = localStorage.getItem(storageKey);
 
@@ -12,7 +11,7 @@ async function ObtenerUsuarioActual() {
         try {
             const parsed = JSON.parse(rawSession);
             if (parsed?.user) return parsed.user;
-        } catch (e) { /* continua con getSession */ }
+        } catch (e) { /* continúa */ }
     }
 
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -27,7 +26,6 @@ async function ObtenerPerfil() {
         return null;
     }
 
-    // Aseguramos que su registro exista en Usuarios
     await fetch(`${API_URL}/usuario-actual/${user.id}?email=${encodeURIComponent(user.email || '')}`);
 
     const res = await fetch(`${API_URL}/perfil/${user.id}?email=${encodeURIComponent(user.email || '')}`);
@@ -46,3 +44,4 @@ async function ActualizarPerfil(nuevo) {
     });
     return await res.json();
 }
+
