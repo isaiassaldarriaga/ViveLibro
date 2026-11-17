@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// 1. IMPORTACIONES DE TUS MÓDULOS DE BACKEND
+
 const {
     GuardarLibro,
     ObtenerLibros,
@@ -40,16 +40,15 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-// 3. SERVIR ARCHIVOS DEL FRONTEND (HTML, CSS, JS)
-// Asegúrate de que tu carpeta hermana se llame 'frontend'
+
 app.use(express.static(path.join(__dirname, '../Public')));
 
-// Ruta principal al entrar a http://localhost:3000
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../Public', 'index.html'));
 });
 
-// ================= RUTAS DE LIBROS =================
+
 app.post('/api/guardar', async (req, res) => {
     try {
         const data = await GuardarLibro(req.body);
@@ -120,7 +119,7 @@ app.delete('/api/libros/:id', async (req, res) => {
     }
 });
 
-// ================= RUTAS DE RECOMENDACIONES =================
+
 app.get('/api/recomendaciones', async (req, res) => {
     try {
         const data = await ObtenerRecomendaciones();
@@ -157,7 +156,6 @@ app.delete('/api/recomendaciones/:id', async (req, res) => {
     }
 });
 
-// ================= RUTAS DE PERFIL =================
 app.get('/api/perfil/:authUserId', async (req, res) => {
     try {
         const data = await ObtenerPerfil(req.params.authUserId, req.query.email);
@@ -177,7 +175,6 @@ app.put('/api/perfil/:authUserId', async (req, res) => {
     }
 });
 
-// ================= RUTAS DE AUTENTICACIÓN =================
 app.post('/api/auth/registro', async (req, res) => {
     try {
         const resultado = await RegistrarUsuario(req.body);
@@ -216,7 +213,7 @@ app.post('/api/auth/restablecer', async (req, res) => {
         res.status(500).json({ ok: false, error: err.message });
     }
 });
-// ================= RUTA PARA OBTENER O CREAR ID DE USUARIO =================
+
 const db = require('./Supabase');
 
 app.get('/api/usuario-actual/:authUserId', async (req, res) => {
@@ -233,7 +230,7 @@ app.get('/api/usuario-actual/:authUserId', async (req, res) => {
 
         if (error) throw error;
 
-        // 2. Si el usuario se creó desde Supabase y no tiene fila en Usuarios, la creamos
+       
         if (!usuario) {
             const { data: nuevo, error: errorInsert } = await db
                 .from('Usuarios')
