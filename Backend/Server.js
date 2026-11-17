@@ -169,13 +169,13 @@ app.get('/api/perfil/:authUserId', async (req, res) => {
 
 app.put('/api/perfil/:authUserId', async (req, res) => {
     try {
-        const { email, ...datosPerfil } = req.body;
-        const resultado = await ActualizarPerfil(req.params.authUserId, email, datosPerfil);
+        const resultado = await ActualizarPerfil(req.params.authUserId, req.body);
         res.status(resultado.ok ? 200 : 400).json(resultado);
     } catch (err) {
         res.status(500).json({ ok: false, error: err.message });
     }
 });
+
 
 app.post('/api/auth/registro', async (req, res) => {
     try {
