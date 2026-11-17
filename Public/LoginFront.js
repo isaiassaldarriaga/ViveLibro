@@ -1,7 +1,7 @@
 const supabaseUrl = "https://yxsogwdxqnmzppuafhqx.supabase.co";
 const supabaseKey = "sb_publishable_PTgYE8EXqVQSWqnWQ_pU4A_CpGJ-gY-";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-const API_URL = "http:/api";
+const API_URL = "/api";
 
 function MostrarRegistro() {
     document.getElementById("seccionLogin").classList.add("d-none");
